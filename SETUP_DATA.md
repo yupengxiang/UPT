@@ -57,6 +57,30 @@ Python prerequisites:
 - shapely
 - scikit-learn
 
+
+```bash
+sudo apt-get update
+
+# Install OpenMPI
+sudo apt-get install openmpi-bin libopenmpi-dev
+
+# Install OpenFOAM
+# Add the repository
+curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash
+# Update the repository information
+sudo apt-get update
+# Install preferred package. Eg,
+sudo apt-get install openfoam2412-default
+# Use the openfoam shell session. Eg,
+openfoam2412
+# active in shell
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+
+# Install python packages
+pip install fluidfoam PyFoam gmsh meshio shapely scikit-learn
+pip install fluidfoam PyFoam gmsh meshio shapely scikit-learn matplotlib Pillow tqdm psutil pandas
+```
+
 Usage:
 
 `python generateCase.py n_objects n_cases n_cores empty_case_dir target_dataset_dir working_dir`
