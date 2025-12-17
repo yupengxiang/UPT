@@ -325,7 +325,8 @@ def main():
         print("current case: ",str(current_case_number))
         
 
-        n_points = random.randint(1,num_points)
+        # n_points = random.randint(1,num_points) # number of circles/partial circles, between 1 and num_points
+        n_points = num_points # <--- fix number of objects for better control
         
         velocity = random.uniform(0.01,0.06)
         
