@@ -157,3 +157,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# data files
+data/transientflow/EmptyCase
+data/transientflow/temp_work
+data/transientflow/n_objects_1_n_cases_100
+data/transientflow/n_objects_2_n_cases_100
+data/transientflow/n_objects_3_n_cases_100
+data/transientflow/n_objects_4_n_cases_100
+data/transientflow/n_objects_5_n_cases_100
