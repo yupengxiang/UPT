@@ -27,3 +27,10 @@ dependencies:
       - torch_geometric
       - torch_harmonics # requirement for neuraloperator but not in dependency tree of neuraloperator
       - wget
+      # for Transient Flow Dataset generation
+      - fluidfoam
+      - PyFoam
+      - gmsh
+      - meshio
+      - shapely
+      - scikit-learn
