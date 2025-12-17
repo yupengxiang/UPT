@@ -14,11 +14,13 @@ from shapely.geometry import Point,Polygon
 
 import torch
 import numpy as np
-import multiprocessing
+# import multiprocessing # <--- 不再需要
+import matplotlib
+matplotlib.use('Agg') # <--- 保持非交互后端
 import matplotlib.pyplot as plt
 import io
 from PIL import Image
-from multiprocessing import Process
+from multiprocessing import Process # <--- 只保留用于网格生成的Process
 
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
@@ -432,13 +434,16 @@ def main():
 
         x,y,z = readmesh(work_dir)
         
-        pool_obj = multiprocessing.Pool()
-        
-        U  = pool_obj.map(readU,[(i,work_dir) for i in range(1,max_time_steps+1)])
-        p  = pool_obj.map(readp,[(i,work_dir) for i in range(1,max_time_steps+1)])
-        
-
-        pool_obj.close()
+        # --- 修改部分：串行读取数据，防止死锁 ---
+        print("Starting sequential data reading...")
+        U = []
+        p = []
+        # 使用 tqdm 显示进度条
+        for i in tqdm(range(1, max_time_steps + 1), desc="Reading U & p"):
+            U.append(readU((i, work_dir)))
+            p.append(readp((i, work_dir)))
+        print("Data reading complete.")
+        # --------------------------------------
 
         U_stacked = torch.stack(U)
         
@@ -457,10 +462,16 @@ def main():
             torch.save(y,solution_dir+"y.th")
 
         shutil.rmtree(work_dir)
-        pool_obj = multiprocessing.Pool()
-        img_list = pool_obj.map(scatter_plot,[(i,x,y,v,triangles,mesh_points) for i in range(U_stacked.shape[0])])
         
-        pool_obj.close()
+        # --- 修改部分：串行绘图，防止内存溢出和GUI死锁 ---
+        print("Starting sequential plotting...")
+        img_list = []
+        # 使用 tqdm 显示进度条
+        for i in tqdm(range(U_stacked.shape[0]), desc="Generating GIF frames"):
+            img = scatter_plot((i, x, y, v, triangles, mesh_points))
+            img_list.append(img)
+        print("Plotting complete.")
+        # ----------------------------------------------
 
         for i in range(len(img_list)):
             img_list[i]._min_frame = 0
